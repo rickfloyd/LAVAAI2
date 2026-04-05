@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="LAVA AI Data Center — An accessible financial charting platform built for people with TBI, PTSD, and seizure disorders." />
+  <title>LAVA AI Data Center — Accessible Financial Charts</title>
+
+  <!-- Lightweight Charts (TradingView open-source, seizure-safe) — bundled locally -->
+  <script src="assets/lightweight-charts.standalone.production.js"></script>
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/accessibility.css" />
+</head>
+<body class="theme-calm">
+
+  <!-- Skip Navigation Link for Screen Readers / Keyboard Users -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- ─────────────────────────────── HEADER ─────────────────────────────── -->
+  <header class="site-header" role="banner">
+    <div class="header-brand">
+      <span class="brand-icon" aria-hidden="true">🌋</span>
+      <h1 class="brand-title">LAVA AI <span class="brand-sub">Data Center</span></h1>
+      <p class="brand-tagline">Accessible Financial Charts — Built for the Disabled</p>
+    </div>
+
+    <!-- Accessibility Controls — always visible, top-right -->
+    <nav class="a11y-toolbar" aria-label="Accessibility controls">
+      <span class="a11y-label" id="a11y-toolbar-label">Accessibility</span>
+
+      <button
+        id="btn-font-decrease"
+        class="a11y-btn"
+        aria-label="Decrease text size"
+        title="Decrease text size"
+        type="button"
+      >A−</button>
+
+      <button
+        id="btn-font-increase"
+        class="a11y-btn"
+        aria-label="Increase text size"
+        title="Increase text size"
+        type="button"
+      >A+</button>
+
+      <button
+        id="btn-contrast"
+        class="a11y-btn"
+        aria-label="Toggle high contrast mode"
+        aria-pressed="false"
+        title="Toggle high contrast"
+        type="button"
+      >⬛ Contrast</button>
+
+      <button
+        id="btn-motion"
+        class="a11y-btn"
+        aria-label="Pause all animations (seizure safety)"
+        aria-pressed="false"
+        title="Pause animations (seizure safety)"
+        type="button"
+      >⏸ Motion</button>
+
+      <button
+        id="btn-theme"
+        class="a11y-btn"
+        aria-label="Switch between calm and dark theme"
+        title="Switch theme"
+        type="button"
+      >🌙 Theme</button>
+
+      <button
+        id="btn-focus"
+        class="a11y-btn"
+        aria-label="Toggle focus mode — hides distractions"
+        aria-pressed="false"
+        title="Focus mode"
+        type="button"
+      >🎯 Focus</button>
+    </nav>
+  </header>
+
+  <!-- ─────────────────────────────── ALERT BAR ─────────────────────────────── -->
+  <div
+    id="status-bar"
+    class="status-bar"
+    role="status"
+    aria-live="polite"
+    aria-atomic="true"
+  >
+    <span id="status-message">Loading market data…</span>
+  </div>
+
+  <!-- ─────────────────────────────── MAIN LAYOUT ─────────────────────────────── -->
+  <div class="app-layout" id="main-content">
+
+    <!-- ───── SIDEBAR ───── -->
+    <aside class="sidebar" aria-label="Symbol watchlist and settings">
+
+      <!-- Symbol Search -->
+      <section class="sidebar-section" aria-labelledby="search-heading">
+        <h2 id="search-heading" class="section-title">Symbol Search</h2>
+        <div class="search-row">
+          <label for="symbol-input" class="sr-only">Enter ticker symbol</label>
+          <input
+            id="symbol-input"
+            class="symbol-input"
+            type="text"
+            value="AAPL"
+            placeholder="e.g. AAPL, BTC, SPY"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            aria-describedby="symbol-hint"
+            maxlength="12"
+          />
+          <button id="btn-load" class="btn-primary" type="button" aria-label="Load chart for entered symbol">
+            Load
+          </button>
+        </div>
+        <p id="symbol-hint" class="hint-text">Type a ticker and press Load or Enter.</p>
+      </section>
+
+      <!-- Watchlist -->
+      <section class="sidebar-section" aria-labelledby="watchlist-heading">
+        <h2 id="watchlist-heading" class="section-title">Watchlist</h2>
+        <ul
+          id="watchlist"
+          class="watchlist"
+          role="list"
+          aria-label="Watchlist — click a symbol to load its chart"
+        >
+          <!-- populated by JS -->
+        </ul>
+      </section>
+
+      <!-- Chart Type -->
+      <section class="sidebar-section" aria-labelledby="chart-type-heading">
+        <h2 id="chart-type-heading" class="section-title">Chart Type</h2>
+        <div class="radio-group" role="radiogroup" aria-labelledby="chart-type-heading">
+          <label class="radio-label">
+            <input type="radio" name="chart-type" value="candlestick" checked />
+            Candlestick
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="chart-type" value="line" />
+            Line (gentler on eyes)
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="chart-type" value="area" />
+            Area
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="chart-type" value="bar" />
+            Bar
+          </label>
+        </div>
+      </section>
+
+      <!-- Interval -->
+      <section class="sidebar-section" aria-labelledby="interval-heading">
+        <h2 id="interval-heading" class="section-title">Interval</h2>
+        <div class="btn-group" role="group" aria-labelledby="interval-heading">
+          <button class="btn-interval active" data-interval="1D" type="button">1D</button>
+          <button class="btn-interval" data-interval="1W" type="button">1W</button>
+          <button class="btn-interval" data-interval="1M" type="button">1M</button>
+          <button class="btn-interval" data-interval="3M" type="button">3M</button>
+          <button class="btn-interval" data-interval="1Y" type="button">1Y</button>
+        </div>
+      </section>
+
+      <!-- Indicators -->
+      <section class="sidebar-section" aria-labelledby="indicators-heading">
+        <h2 id="indicators-heading" class="section-title">Indicators</h2>
+        <div class="checkbox-group">
+          <label class="check-label">
+            <input type="checkbox" id="ind-sma20" />
+            SMA 20
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="ind-sma50" />
+            SMA 50
+          </label>
+          <label class="check-label">
+            <input type="checkbox" id="ind-volume" checked />
+            Volume
+          </label>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- ───── MAIN CHART AREA ───── -->
+    <main class="chart-area" aria-label="Chart area">
+
+      <!-- Chart Header -->
+      <div class="chart-header">
+        <div class="chart-title-block">
+          <h2 id="chart-symbol" class="chart-symbol" aria-live="polite">AAPL</h2>
+          <span id="chart-name" class="chart-name">Apple Inc.</span>
+        </div>
+        <div class="price-block" aria-live="polite" aria-atomic="true">
+          <span id="price-current" class="price-current">—</span>
+          <span id="price-change" class="price-change"></span>
+        </div>
+      </div>
+
+      <!-- Screen-reader description of chart -->
+      <div id="chart-description" class="sr-only" aria-live="polite">
+        Chart data will load here. Use the watchlist or symbol search to choose a symbol.
+      </div>
+
+      <!-- Primary Chart Container -->
+      <div
+        id="chart-container"
+        class="chart-container"
+        role="img"
+        aria-labelledby="chart-symbol"
+        aria-describedby="chart-description"
+      ></div>
+
+      <!-- Volume Chart Container -->
+      <div
+        id="volume-container"
+        class="volume-container"
+        role="img"
+        aria-label="Volume chart"
+      ></div>
+
+      <!-- Data Table (screen-reader / low-vision alternative) -->
+      <details class="data-table-details" id="data-table-section">
+        <summary class="data-table-summary">
+          📋 View data as table (screen reader / low vision)
+        </summary>
+        <div class="data-table-wrapper" tabindex="0">
+          <table id="data-table" class="data-table" aria-label="Chart data table">
+            <caption>Price data for <span id="table-symbol">—</span></caption>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Open</th>
+                <th scope="col">High</th>
+                <th scope="col">Low</th>
+                <th scope="col">Close</th>
+                <th scope="col">Volume</th>
+              </tr>
+            </thead>
+            <tbody id="data-table-body">
+              <tr><td colspan="6">No data loaded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+    </main>
+
+    <!-- ───── INFO PANEL ───── -->
+    <aside class="info-panel" aria-label="Market statistics">
+
+      <!-- Price Info -->
+      <section class="info-section" aria-labelledby="price-info-heading">
+        <h2 id="price-info-heading" class="section-title">Price Info</h2>
+        <dl class="stat-list" aria-live="polite">
+          <div class="stat-row">
+            <dt>Open</dt><dd id="stat-open">—</dd>
+          </div>
+          <div class="stat-row">
+            <dt>High</dt><dd id="stat-high">—</dd>
+          </div>
+          <div class="stat-row">
+            <dt>Low</dt><dd id="stat-low">—</dd>
+          </div>
+          <div class="stat-row">
+            <dt>Close</dt><dd id="stat-close">—</dd>
+          </div>
+          <div class="stat-row">
+            <dt>Volume</dt><dd id="stat-volume">—</dd>
+          </div>
+          <div class="stat-row">
+            <dt>52W High</dt><dd id="stat-52h">—</dd>
+          </div>
+          <div class="stat-row">
+            <dt>52W Low</dt><dd id="stat-52l">—</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Accessibility Quick Tips -->
+      <section class="info-section" aria-labelledby="tips-heading">
+        <h2 id="tips-heading" class="section-title">Accessibility Tips</h2>
+        <ul class="tips-list">
+          <li>Press <kbd>⏸ Motion</kbd> to disable all animations (seizure safety)</li>
+          <li>Press <kbd>⬛ Contrast</kbd> for high-contrast mode</li>
+          <li>Press <kbd>A+</kbd> / <kbd>A−</kbd> to resize text</li>
+          <li>Press <kbd>🎯 Focus</kbd> to hide sidebars</li>
+          <li>Use <kbd>Tab</kbd> to navigate by keyboard</li>
+          <li>Line chart is gentler on eyes than candlestick</li>
+          <li>The data table below the chart works with screen readers</li>
+        </ul>
+      </section>
+
+      <!-- Keyboard shortcuts -->
+      <section class="info-section focus-hide" aria-labelledby="shortcuts-heading">
+        <h2 id="shortcuts-heading" class="section-title">Keyboard Shortcuts</h2>
+        <dl class="shortcut-list">
+          <div class="shortcut-row"><dt><kbd>Enter</kbd></dt><dd>Load symbol</dd></div>
+          <div class="shortcut-row"><dt><kbd>Alt+C</kbd></dt><dd>Toggle contrast</dd></div>
+          <div class="shortcut-row"><dt><kbd>Alt+M</kbd></dt><dd>Toggle motion</dd></div>
+          <div class="shortcut-row"><dt><kbd>Alt+F</kbd></dt><dd>Toggle focus mode</dd></div>
+          <div class="shortcut-row"><dt><kbd>Alt++</kbd></dt><dd>Increase text size</dd></div>
+          <div class="shortcut-row"><dt><kbd>Alt+-</kbd></dt><dd>Decrease text size</dd></div>
+        </dl>
+      </section>
+
+    </aside>
+
+  </div><!-- /.app-layout -->
+
+  <!-- ─────────────────────────────── FOOTER ─────────────────────────────── -->
+  <footer class="site-footer focus-hide" role="contentinfo">
+    <p>
+      LAVA AI Data Center — Built with ❤️ for the disabled community.
+      Seizure-safe · Screen-reader friendly · TBI/PTSD considerate design.
+    </p>
+    <p class="footer-note">
+      Price data is simulated for demonstration. Connect a real market data API for live prices.
+    </p>
+  </footer>
+
+  <script src="js/accessibility.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

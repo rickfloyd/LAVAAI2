@@ -1,0 +1,101 @@
+/* ============================================================
+   LAVA AI Data Center — Accessibility Overrides
+   Applied dynamically by accessibility.js via body class names
+   ============================================================ */
+
+/* ── High-Contrast Mode ─────────────────────────────────────── */
+body.high-contrast {
+  --color-bg:          #000000;
+  --color-surface:     #0a0a0a;
+  --color-surface-2:   #111111;
+  --color-border:      #ffffff;
+  --color-text:        #ffffff;
+  --color-text-muted:  #dddddd;
+  --color-text-strong: #ffffff;
+  --color-accent:      #ffff00;
+  --color-accent-hover:#ffe000;
+  --color-positive:    #00ff88;
+  --color-negative:    #ff6666;
+  --color-focus-ring:  #ffff00;
+}
+
+body.high-contrast .a11y-btn,
+body.high-contrast .btn-primary,
+body.high-contrast .btn-interval,
+body.high-contrast .symbol-input,
+body.high-contrast .watchlist-item {
+  border-width: 2px;
+}
+
+body.high-contrast :focus-visible {
+  outline-width: 4px;
+  outline-color: #ffff00;
+}
+
+/* ── Reduced Motion (seizure safety) ───────────────────────── */
+/* Applied manually via .motion-reduced class OR via the media query */
+body.motion-reduced *,
+body.motion-reduced *::before,
+body.motion-reduced *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Also honour the OS-level setting automatically */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Font Size Scales ───────────────────────────────────────── */
+/* Base is 1rem (set in :root). Each scale bumps the root font-size. */
+
+body.text-size-sm {
+  font-size: 0.875rem;
+}
+
+body.text-size-md {
+  font-size: 1rem;       /* default */
+}
+
+body.text-size-lg {
+  font-size: 1.2rem;
+}
+
+body.text-size-xl {
+  font-size: 1.4rem;
+}
+
+body.text-size-2xl {
+  font-size: 1.6rem;
+}
+
+/* ── Focus Mode — hides sidebars and footer ────────────────── */
+body.focus-mode .sidebar,
+body.focus-mode .info-panel,
+body.focus-mode .site-footer,
+body.focus-mode .focus-hide {
+  display: none !important;
+}
+
+body.focus-mode .chart-area {
+  flex: 1;
+}
+
+/* ── Line spacing helper (TBI readability) ──────────────────── */
+body.wide-spacing {
+  line-height: 2;
+  letter-spacing: 0.04em;
+}
+
+body.wide-spacing p,
+body.wide-spacing li,
+body.wide-spacing td,
+body.wide-spacing dd {
+  margin-bottom: 0.5em;
+}
